@@ -1,7 +1,6 @@
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import ProductCard from './components/product-card';
 import { useEffect, useState } from 'react';
 import { fetchProducts } from './services/api-service';
 import {
@@ -16,7 +15,11 @@ import {
   Paper,
   Toolbar,
 } from '@mui/material';
-
+import SearchFilter from './components/search-filter';
+import SortSelect from './components/sort-select';
+import CategorySelect from './components/category-select';
+import ProductGrid from './components/product-grid';
+import Copyright from './components/copyright';
 export default function App() {
   const [products, setProducts] = useState([]);
   const [state, setState] = useState({ query: '', list: [] });
@@ -51,7 +54,7 @@ export default function App() {
     const value = e.target.value.toLowerCase();
     const filteredProducts = products.filter(
       (product) =>
-        product[sortByField].toLowerCase().includes(value) &&
+        product.title.toLowerCase().includes(value) &&
         (selectedCategory === 'all' || product.category === selectedCategory)
     );
 
@@ -69,13 +72,20 @@ export default function App() {
     );
   }
 
+  function handleSortChange(event) {
+    const newSortType = event.target.value;
+    setSortType(newSortType);
+    const sortedProducts = sortFunc(state.list, newSortType, sortByField);
+    setState({ ...state, list: sortedProducts });
+  }
+
   function handleCategoryChange(event) {
-    const category = event.target.value;
-    setSelectedCategory(category);
+    const newCategory = event.target.value;
+    setSelectedCategory(newCategory);
     const filteredProducts = products.filter(
-      (p) => p.category === category || category === 'all'
+      (p) => p.category === newCategory || newCategory === 'all'
     );
-    setState({ ...state, list: filteredProducts });
+    setState({ query: state.query, list: filteredProducts });
   }
 
   return (
@@ -102,71 +112,19 @@ export default function App() {
               disableGutters
               sx={{ justifyContent: 'space-between', flexWrap: 'wrap' }}
             >
-              <FormControl
-                fullWidth
-                margin="normal"
-                sx={{ flex: 1, minWidth: '150px', marginRight: '16px' }}
-              >
-                <TextField
-                  id="search"
-                  label="Search Products"
-                  variant="outlined"
-                  onChange={handleChange}
-                  value={state.query}
-                  type="search"
-                />
-              </FormControl>
-              <FormControl
-                margin="normal"
-                sx={{ flex: 1, minWidth: '120px', marginRight: '16px' }}
-              >
-                <InputLabel id="sortby-label">Sort by</InputLabel>
-                <Select
-                  labelId="sortby-label"
-                  id="sortby"
-                  value={sortType}
-                  onChange={(e) =>
-                    setState({
-                      query: state.query,
-                      list: sortFunc(state.list, e.target.value, sortByField),
-                    })
-                  }
-                  label="Sort By"
-                >
-                  <MenuItem value="none" disabled>
-                    None
-                  </MenuItem>
-                  <MenuItem value="ascending">Ascending</MenuItem>
-                  <MenuItem value="descending">Descending</MenuItem>
-                </Select>
-              </FormControl>
-              <FormControl margin="normal" sx={{ flex: 1, minWidth: '120px' }}>
-                <InputLabel id="category-label">Category</InputLabel>
-                <Select
-                  labelId="category-label"
-                  id="category"
-                  value={selectedCategory}
-                  onChange={handleCategoryChange}
-                  label="Category"
-                >
-                  {categories.map((category) => (
-                    <MenuItem key={category} value={category}>
-                      {category}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              <SearchFilter query={state.query} onChange={handleChange} />
+              <SortSelect sortType={sortType} onChange={handleSortChange} />
+              <CategorySelect
+                categories={categories}
+                selectedCategory={selectedCategory}
+                onChange={handleCategoryChange}
+              />
             </Toolbar>
-            <Grid container spacing={3}>
-              {state.list.map((product) => (
-                <Grid key={product.id} item xs={12} sm={6} md={4} lg={3}>
-                  <ProductCard product={product} />
-                </Grid>
-              ))}
-            </Grid>
+            <ProductGrid products={state.list} />
           </Paper>
         )}
       </Box>
+      <Copyright />
     </Container>
   );
 }
