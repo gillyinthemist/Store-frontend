@@ -24,7 +24,7 @@ export default function App() {
           Products{' '}
         </Typography>
         {products.map((product) => (
-          <div>{product.title}</div>
+          <ProductCard key={product.id} product={product} />
         ))}
         <Copyright />
       </Box>
