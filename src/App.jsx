@@ -13,6 +13,8 @@ import {
   Select,
   TextField,
   Alert,
+  Paper,
+  Toolbar,
 } from '@mui/material';
 
 export default function App() {
@@ -32,7 +34,6 @@ export default function App() {
         setProducts(fetchedProducts);
         setState({ query: '', list: fetchedProducts });
 
-        // Set categories
         const uniqueCategories = Array.from(
           new Set(fetchedProducts.map((p) => p.category))
         );
@@ -80,7 +81,7 @@ export default function App() {
   return (
     <Container maxWidth="lg">
       <Box sx={{ my: 4 }}>
-        <Typography variant="h4" component="h1" sx={{ mb: 2 }}>
+        <Typography variant="h4" component="h1" sx={{ mb: 4 }}>
           Products
         </Typography>
         {error && <Alert severity="error">{error}</Alert>}
@@ -96,62 +97,74 @@ export default function App() {
             <CircularProgress />
           </Box>
         ) : (
-          <Box>
-            <FormControl fullWidth margin="normal">
-              <TextField
-                id="search"
-                label="Search"
-                variant="outlined"
-                onChange={handleChange}
-                value={state.query}
-                type="search"
-              />
-            </FormControl>
-            <FormControl fullWidth margin="normal">
-              <InputLabel id="sortby-label">Sort by</InputLabel>
-              <Select
-                labelId="sortby-label"
-                id="sortby"
-                value={sortType}
-                onChange={(e) =>
-                  setState({
-                    query: state.query,
-                    list: sortFunc(state.list, e.target.value, sortByField),
-                  })
-                }
-                label="Sort By"
+          <Paper elevation={3} sx={{ p: 2 }}>
+            <Toolbar
+              disableGutters
+              sx={{ justifyContent: 'space-between', flexWrap: 'wrap' }}
+            >
+              <FormControl
+                fullWidth
+                margin="normal"
+                sx={{ flex: 1, minWidth: '150px', marginRight: '16px' }}
               >
-                <MenuItem value="none" disabled>
-                  None
-                </MenuItem>
-                <MenuItem value="ascending">Ascending</MenuItem>
-                <MenuItem value="descending">Descending</MenuItem>
-              </Select>
-            </FormControl>
-            <FormControl fullWidth margin="normal">
-              <InputLabel id="category-label">Category</InputLabel>
-              <Select
-                labelId="category-label"
-                id="category"
-                value={selectedCategory}
-                onChange={handleCategoryChange}
-                label="Category"
+                <TextField
+                  id="search"
+                  label="Search Products"
+                  variant="outlined"
+                  onChange={handleChange}
+                  value={state.query}
+                  type="search"
+                />
+              </FormControl>
+              <FormControl
+                margin="normal"
+                sx={{ flex: 1, minWidth: '120px', marginRight: '16px' }}
               >
-                {categories.map((category) => (
-                  <MenuItem key={category} value={category}>
-                    {category}
+                <InputLabel id="sortby-label">Sort by</InputLabel>
+                <Select
+                  labelId="sortby-label"
+                  id="sortby"
+                  value={sortType}
+                  onChange={(e) =>
+                    setState({
+                      query: state.query,
+                      list: sortFunc(state.list, e.target.value, sortByField),
+                    })
+                  }
+                  label="Sort By"
+                >
+                  <MenuItem value="none" disabled>
+                    None
                   </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <Grid container spacing={2}>
+                  <MenuItem value="ascending">Ascending</MenuItem>
+                  <MenuItem value="descending">Descending</MenuItem>
+                </Select>
+              </FormControl>
+              <FormControl margin="normal" sx={{ flex: 1, minWidth: '120px' }}>
+                <InputLabel id="category-label">Category</InputLabel>
+                <Select
+                  labelId="category-label"
+                  id="category"
+                  value={selectedCategory}
+                  onChange={handleCategoryChange}
+                  label="Category"
+                >
+                  {categories.map((category) => (
+                    <MenuItem key={category} value={category}>
+                      {category}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Toolbar>
+            <Grid container spacing={3}>
               {state.list.map((product) => (
                 <Grid key={product.id} item xs={12} sm={6} md={4} lg={3}>
                   <ProductCard product={product} />
                 </Grid>
               ))}
             </Grid>
-          </Box>
+          </Paper>
         )}
       </Box>
     </Container>
