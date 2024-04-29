@@ -9,6 +9,14 @@ import SortSelect from './components/sort-select';
 import CategorySelect from './components/category-select';
 import ProductGrid from './components/product-grid';
 import Copyright from './components/copyright';
+
+/**
+ * Simple product display table UI
+ * Only implemented GET, with some basic filtering(categories are dynamic)
+ * A more rounded app would use some global state management, and perhaps some libraries like stately-data
+ *
+ *
+ */
 export default function App() {
   const [products, setProducts] = useState([]);
   const [state, setState] = useState({ query: '', list: [] });
