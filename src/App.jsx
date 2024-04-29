@@ -3,18 +3,7 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { useEffect, useState } from 'react';
 import { fetchProducts } from './services/api-service';
-import {
-  CircularProgress,
-  FormControl,
-  Grid,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
-  Alert,
-  Paper,
-  Toolbar,
-} from '@mui/material';
+import { CircularProgress, Alert, Paper, Toolbar } from '@mui/material';
 import SearchFilter from './components/search-filter';
 import SortSelect from './components/sort-select';
 import CategorySelect from './components/category-select';
